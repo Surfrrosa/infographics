@@ -1,0 +1,8 @@
+{
+  "version": 2,
+  "routes": [
+    { "src": "^/vibe-coding/?$", "dest": "/projects/vibe-coding/index.html" },
+    { "src": "^/product-multiplier/?$", "dest": "/projects/product-multiplier/index.html" },
+    { "src": "^/top-shelf-ai-stack/?$", "dest": "/projects/top-shelf-ai-stack/index.html" }
+  ]
+}
