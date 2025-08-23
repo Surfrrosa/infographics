@@ -10,7 +10,7 @@
       --plan:#60A5FA; --research:#A78BFA; --build:#34D399; --design:#F472B6; --automate:#FBBF24; --store:#4ADE80; --distribute:#F87171;
     }
     html,body{height:100%}
-    body{margin:0;background:#0a0a0b;color:var(--ink);font:14px/1.45 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto}
+    body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto}
     .wrap{max-width:1100px;margin:0 auto;padding:32px}
     h1{margin:0 0 6px;font-size:28px;font-weight:800;letter-spacing:-0.02em;text-align:center}
     .sub{color:var(--muted);text-align:center;margin:0 0 20px}
@@ -21,149 +21,205 @@
     .credit{margin:10px auto 0;text-align:center;color:#8b8b95;font-size:11px}
     .credit a{color:#c7c7d1}
     .note{max-width:760px;margin:16px auto 0;color:#9ca3af;font-size:13px}
-    /* Subtle fade/float for nodes */
-    .node{filter:drop-shadow(0 0 6px rgba(255,255,255,.15)) drop-shadow(0 0 12px currentColor); transform-origin:center; animation:pop .6s ease both}
+    .node{filter:drop-shadow(0 0 6px rgba(255,255,255,.12)) drop-shadow(0 0 10px currentColor); transform-origin:center; animation:pop .6s ease both}
+    .node.hero{filter:drop-shadow(0 0 10px rgba(255,255,255,.18)) drop-shadow(0 0 18px currentColor) drop-shadow(0 0 32px currentColor)}
     @keyframes pop { from{opacity:0; transform:scale(.9)} to{opacity:1; transform:scale(1)} }
-    .label{font-weight:700;fill:#fff}
-    .sublabel{fill:#9ca3af}
-    /* Make SVG scale */
+    .label{font-weight:800;fill:#fff;letter-spacing:.2px}
+    .sublabel{fill:#a6a6b0;font-style:italic}
     .frame{width:100%;height:auto;display:block}
-    /* Hover pulse */
     .node:hover{animation:pulse .9s ease-in-out infinite alternate}
     @keyframes pulse { to{transform:scale(1.08)} }
+    .toolbar{display:flex;gap:8px;justify-content:center;margin:10px 0 0;flex-wrap:wrap}
+    button{background:#1f1f22;color:#e5e7eb;border:1px solid #2a2a2f;border-radius:10px;padding:8px 12px;cursor:pointer}
+    button:hover{background:#27272b}
+    .mark{position:absolute;right:14px;top:14px;color:#6b7280;font-size:11px;opacity:.55}
+    .mark a{color:#9aa0aa}
   </style>
 </head>
 <body>
   <div class="wrap">
-    <h1>⚡️ Top Shelf AI Stack (2025)</h1>
-    <p class="sub">Pick one champion per slice. Build a stack you actually love.</p>
+    <h1>⚡️ Build Your Own Stack</h1>
+    <p class="sub">Mix and match across the constellation to experiment and build a system you love.</p>
 
     <div class="panel">
-      <!-- SVG Constellation -->
-      <svg class="frame" viewBox="0 0 800 800" role="img" aria-labelledby="title desc">
-        <title id="title">Top Shelf AI Stack (2025) Radial Map</title>
-        <desc id="desc">A circular constellation map showing core LLMs at center and seven slices for plan, research, build, design, automate, store, distribute.</desc>
+      <div class="mark">© <a href="https://nothingbutstatic.substack.com/" target="_blank" rel="noopener">nothing but static</a></div>
 
-        <!-- Background dotted grid -->
+      <svg id="stackSvg" class="frame" viewBox="0 0 820 820" role="img" aria-labelledby="title desc">
+        <title id="title">Top Shelf AI Stack (2025) Radial Map</title>
+        <desc id="desc">Circular constellation: core LLM center, seven slices, with hybrid nodes between slices.</desc>
+
         <defs>
           <pattern id="dots" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
             <circle cx="1" cy="1" r="1" fill="#27272a"></circle>
           </pattern>
+          <!-- Gradients -->
+          <linearGradient id="grad-notionai" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="var(--plan)"/>
+            <stop offset="100%" stop-color="var(--store)"/>
+          </linearGradient>
+          <linearGradient id="grad-rewind" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="var(--store)"/>
+            <stop offset="50%" stop-color="var(--research)"/>
+            <stop offset="100%" stop-color="var(--automate)"/>
+          </linearGradient>
+          <linearGradient id="grad-ada" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="var(--research)"/>
+            <stop offset="100%" stop-color="var(--build)"/>
+          </linearGradient>
+          <linearGradient id="grad-cursor" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="var(--build)"/>
+            <stop offset="100%" stop-color="var(--design)"/>
+          </linearGradient>
         </defs>
-        <rect x="0" y="0" width="800" height="800" fill="url(#dots)"></rect>
+        <rect x="0" y="0" width="820" height="820" fill="url(#dots)"></rect>
 
-        <!-- Concentric orbits -->
-        <g stroke="#27272a" fill="none">
-          <circle cx="400" cy="400" r="150"></circle>
-          <circle cx="400" cy="400" r="225"></circle>
-          <circle cx="400" cy="400" r="300"></circle>
+        <g stroke="rgba(39,39,42,.4)" fill="none">
+          <circle cx="410" cy="410" r="150"></circle>
+          <circle cx="410" cy="410" r="225"></circle>
+          <circle cx="410" cy="410" r="300"></circle>
+          <circle cx="410" cy="410" r="105" stroke="rgba(63,63,70,.25)"></circle>
         </g>
 
         <!-- Core -->
         <g>
-          <circle cx="400" cy="400" r="70" fill="#0a0a0b" stroke="#3f3f46"></circle>
-          <text x="400" y="392" text-anchor="middle" class="label" font-size="14">Core LLM</text>
-          <text x="400" y="410" text-anchor="middle" class="sublabel" font-size="12">ChatGPT · Claude</text>
+          <circle cx="410" cy="410" r="70" fill="#0a0a0b" stroke="#3f3f46"></circle>
+          <text x="410" y="402" text-anchor="middle" class="label" font-size="15">Core LLM</text>
+          <text x="410" y="420" text-anchor="middle" class="sublabel" font-size="12">ChatGPT · Claude</text>
         </g>
 
-        <!-- Helper to compute polar points manually (precomputed below) -->
-        <!-- We place 7 slices at equal angles starting at top (−90°):  -90, -38.57, 12.86, 64.29, 115.71, 167.14, 218.57  -->
+        <!-- Slice separators (angles fixed) -->
+        <!-- PLAN (12 o'clock) -->
+        <line x1="410" y1="410" x2="410" y2="110" stroke="rgba(39,39,42,.35)"/>
+        <text x="410" y="82" text-anchor="middle" class="label" font-size="14">Plan</text>
+        <text x="410" y="98" text-anchor="middle" class="sublabel" font-size="11">Where ideas become action</text>
 
-        <!-- Slice: PLAN -->
-        <!-- radial line -->
-        <line x1="400" y1="400" x2="400" y2="100" stroke="#27272a"/>
-        <!-- label -->
-        <text x="400" y="80" text-anchor="middle" class="label" font-size="12">Plan</text>
-        <text x="400" y="94" text-anchor="middle" class="sublabel" font-size="11">Where ideas become action</text>
-        <!-- nodes (inner/mid/outer with tiny jitter) -->
+        <!-- RESEARCH (~2 o'clock) -->
+        <line x1="410" y1="410" x2="739.6" y2="360.4" stroke="rgba(39,39,42,.35)"/>
+        <text x="705" y="265" text-anchor="middle" class="label" font-size="14">Research</text>
+        <text x="705" y="283" text-anchor="middle" class="sublabel" font-size="11">Expand context. Find signal</text>
+
+        <!-- BUILD (~3 o'clock) -->
+        <line x1="410" y1="410" x2="690.1" y2="479.0" stroke="rgba(39,39,42,.35)"/>
+        <text x="710" y="453" text-anchor="middle" class="label" font-size="14">Build</text>
+        <text x="710" y="471" text-anchor="middle" class="sublabel" font-size="11">Ship product faster</text>
+
+        <!-- DESIGN (~5 o'clock) -->
+        <line x1="410" y1="410" x2="539.8" y2="713.3" stroke="rgba(39,39,42,.35)"/>
+        <text x="548" y="728" text-anchor="middle" class="label" font-size="14">Design</text>
+        <text x="548" y="744" text-anchor="middle" class="sublabel" font-size="11">Interfaces, visuals, motion</text>
+
+        <!-- AUTOMATE (~7 o'clock) -->
+        <line x1="410" y1="410" x2="290.2" y2="713.3" stroke="rgba(39,39,42,.35)"/>
+        <text x="282" y="728" text-anchor="middle" class="label" font-size="14">Automate</text>
+        <text x="282" y="744" text-anchor="middle" class="sublabel" font-size="11">Glue for your stack</text>
+
+        <!-- STORE (~8:30) -->
+        <line x1="410" y1="410" x2="139.9" y2="479.0" stroke="rgba(39,39,42,.35)"/>
+        <text x="120" y="455" text-anchor="middle" class="label" font-size="14">Store</text>
+        <text x="120" y="473" text-anchor="middle" class="sublabel" font-size="11">Databases + memory</text>
+
+        <!-- DISTRIBUTE (~10 o'clock) -->
+        <line x1="410" y1="410" x2="90.4" y2="360.4" stroke="rgba(39,39,42,.35)"/>
+        <text x="120" y="267" text-anchor="middle" class="label" font-size="14">Distribute</text>
+        <text x="120" y="285" text-anchor="middle" class="sublabel" font-size="11">Publish & grow</text>
+
+        <!-- NODES (unchanged from last good layout) -->
+        <!-- Plan tools -->
         <g style="color:var(--plan)">
-          <!-- inner (150 at -90°) -->
-          <circle class="node" cx="400" cy="250" r="12" fill="var(--plan)"></circle>
-          <text x="400" y="230" text-anchor="middle" font-size="11" class="label">Linear</text>
-          <!-- mid (225 at -80°) -->
-          <circle class="node" cx="439.1" cy="187.6" r="12" fill="var(--plan)"></circle>
-          <text x="439.1" y="167.6" text-anchor="middle" font-size="11" class="label">Notion</text>
+          <circle class="node hero" cx="410" cy="260" r="13.5" fill="var(--plan)"></circle>
+          <text x="410" y="240" text-anchor="middle" font-size="11" class="label">Linear</text>
+          <circle class="node" cx="451.1" cy="195.6" r="12" fill="var(--plan)"></circle>
+          <text x="451.1" y="175.6" text-anchor="middle" font-size="11" class="label">Notion</text>
+          <circle class="node" cx="330" cy="210" r="12.5" fill="url(#grad-notionai)"></circle>
+          <text x="330" y="192" text-anchor="middle" font-size="11" class="label">Notion AI</text>
         </g>
 
-        <!-- Slice: RESEARCH (angle ≈ -38.57°) -->
-        <line x1="400" y1="400" x2="724.6" y2="350.4" stroke="#27272a"/>
-        <text x="744.0" y="347.5" text-anchor="middle" class="label" font-size="12">Research</text>
-        <text x="744.0" y="361.5" text-anchor="middle" class="sublabel" font-size="11">Expand context. Find signal.</text>
+        <!-- Research tools + hybrids -->
         <g style="color:var(--research)">
-          <!-- inner -->
-          <circle class="node" cx="517.8" cy="300.6" r="12" fill="var(--research)"></circle>
-          <text x="517.8" y="280.6" text-anchor="middle" font-size="11" class="label">Perplexity</text>
-          <!-- mid -->
-          <circle class="node" cx="575.1" cy="264.7" r="12" fill="var(--research)"></circle>
-          <text x="575.1" y="244.7" text-anchor="middle" font-size="11" class="label">Claude</text>
+          <circle class="node hero" cx="531.8" cy="310.6" r="13.5" fill="var(--research)"></circle>
+          <text x="531.8" y="290.6" text-anchor="middle" font-size="11" class="label">Perplexity</text>
+          <circle class="node" cx="589.1" cy="274.7" r="12" fill="var(--research)"></circle>
+          <text x="589.1" y="254.7" text-anchor="middle" font-size="11" class="label">Claude</text>
+          <circle class="node" cx="600" cy="360" r="12.5" fill="url(#grad-ada)"></circle>
+          <text x="600" y="342" text-anchor="middle" font-size="11" class="label">ChatGPT ADA</text>
         </g>
 
-        <!-- Slice: BUILD (angle ≈ 12.86°) -->
-        <line x1="400" y1="400" x2="675.1" y2="469.0" stroke="#27272a"/>
-        <text x="692.0" y="477.0" text-anchor="middle" class="label" font-size="12">Build</text>
-        <text x="692.0" y="491.0" text-anchor="middle" class="sublabel" font-size="11">Ship product faster</text>
+        <!-- Build -->
         <g style="color:var(--build)">
-          <circle class="node" cx="546.7" cy="433.4" r="12" fill="var(--build)"></circle>
-          <text x="546.7" y="413.4" text-anchor="middle" font-size="11" class="label">Devin</text>
-          <circle class="node" cx="606.2" cy="446.9" r="12" fill="var(--build)"></circle>
-          <text x="606.2" y="426.9" text-anchor="middle" font-size="11" class="label">Copilot</text>
+          <circle class="node hero" cx="560.7" cy="443.4" r="13.5" fill="var(--build)"></circle>
+          <text x="560.7" y="423.4" text-anchor="middle" font-size="11" class="label">Devin</text>
+          <circle class="node" cx="620.2" cy="456.9" r="12" fill="var(--build)"></circle>
+          <text x="620.2" y="436.9" text-anchor="middle" font-size="11" class="label">Copilot</text>
+          <circle class="node" cx="650" cy="500" r="12" fill="var(--build)"></circle>
+          <text x="650" y="520" text-anchor="middle" font-size="11" class="label">Replit</text>
+          <circle class="node" cx="560" cy="530" r="12.5" fill="url(#grad-cursor)"></circle>
+          <text x="560" y="512" text-anchor="middle" font-size="11" class="label">Cursor AI</text>
         </g>
 
-        <!-- Slice: DESIGN (angle ≈ 64.29°) -->
-        <line x1="400" y1="400" x2="524.8" y2="703.3" stroke="#27272a"/>
-        <text x="532.0" y="724.0" text-anchor="middle" class="label" font-size="12">Design</text>
-        <text x="532.0" y="738.0" text-anchor="middle" class="sublabel" font-size="11">Interfaces, visuals, motion</text>
+        <!-- Design -->
         <g style="color:var(--design)">
-          <circle class="node" cx="468.0" cy="553.8" r="12" fill="var(--design)"></circle>
-          <text x="468.0" y="533.8" text-anchor="middle" font-size="11" class="label">Figma</text>
-          <circle class="node" cx="493.7" cy="612.6" r="12" fill="var(--design)"></circle>
-          <text x="493.7" y="592.6" text-anchor="middle" font-size="11" class="label">Runway</text>
+          <circle class="node hero" cx="482.0" cy="563.8" r="13.5" fill="var(--design)"></circle>
+          <text x="482.0" y="543.8" text-anchor="middle" font-size="11" class="label">Figma</text>
+          <circle class="node" cx="507.7" cy="622.6" r="12" fill="var(--design)"></circle>
+          <text x="507.7" y="602.6" text-anchor="middle" font-size="11" class="label">Runway</text>
+          <circle class="node" cx="545" cy="660" r="12" fill="var(--design)"></circle>
+          <text x="545" y="680" text-anchor="middle" font-size="11" class="label">Canva</text>
         </g>
 
-        <!-- Slice: AUTOMATE (angle ≈ 115.71°) -->
-        <line x1="400" y1="400" x2="275.2" y2="703.3" stroke="#27272a"/>
-        <text x="268.0" y="724.0" text-anchor="middle" class="label" font-size="12">Automate</text>
-        <text x="268.0" y="738.0" text-anchor="middle" class="sublabel" font-size="11">Glue for your stack</text>
+        <!-- Automate -->
         <g style="color:var(--automate)">
-          <circle class="node" cx="332.0" cy="553.8" r="12" fill="var(--automate)"></circle>
-          <text x="332.0" y="533.8" text-anchor="middle" font-size="11" class="label">Zapier AI</text>
-          <circle class="node" cx="306.3" cy="612.6" r="12" fill="var(--automate)"></circle>
-          <text x="306.3" y="592.6" text-anchor="middle" font-size="11" class="label">n8n / Make</text>
+          <circle class="node hero" cx="346.0" cy="563.8" r="13.5" fill="var(--automate)"></circle>
+          <text x="346.0" y="543.8" text-anchor="middle" font-size="11" class="label">Zapier AI</text>
+          <circle class="node" cx="320.3" cy="622.6" r="12" fill="var(--automate)"></circle>
+          <text x="320.3" y="602.6" text-anchor="middle" font-size="11" class="label">n8n</text>
+          <circle class="node" cx="300" cy="640" r="12" fill="var(--automate)"></circle>
+          <text x="300" y="660" text-anchor="middle" font-size="11" class="label">Make</text>
+
         </g>
 
-        <!-- Slice: STORE (angle ≈ 167.14°) -->
-        <line x1="400" y1="400" x2="124.9" y2="469.0" stroke="#27272a"/>
-        <text x="108.0" y="477.0" text-anchor="middle" class="label" font-size="12">Store</text>
-        <text x="108.0" y="491.0" text-anchor="middle" class="sublabel" font-size="11">Databases + memory</text>
+        <!-- Store -->
         <g style="color:var(--store)">
-          <circle class="node" cx="253.3" cy="433.4" r="12" fill="var(--store)"></circle>
-          <text x="253.3" y="413.4" text-anchor="middle" font-size="11" class="label">Airtable</text>
-          <circle class="node" cx="193.8" cy="446.9" r="12" fill="var(--store)"></circle>
-          <text x="193.8" y="426.9" text-anchor="middle" font-size="11" class="label">Pinecone</text>
-          <!-- optional third -->
-          <circle class="node" cx="174.0" cy="470.0" r="12" fill="var(--store)"></circle>
-          <text x="174.0" y="450.0" text-anchor="middle" font-size="11" class="label">Mem.ai</text>
+          <circle class="node hero" cx="267.3" cy="443.4" r="13.5" fill="var(--store)"></circle>
+          <text x="267.3" y="423.4" text-anchor="middle" font-size="11" class="label">Airtable</text>
+          <circle class="node" cx="207.8" cy="456.9" r="12" fill="var(--store)"></circle>
+          <text x="207.8" y="436.9" text-anchor="middle" font-size="11" class="label">Pinecone</text>
+          <circle class="node" cx="188.0" cy="480.0" r="12" fill="var(--store)"></circle>
+          <text x="188.0" y="460.0" text-anchor="middle" font-size="11" class="label">Mem.ai</text>
+          <circle class="node" cx="350" cy="330" r="12.5" fill="url(#grad-rewind)"></circle>
+          <text x="350" y="312" text-anchor="middle" font-size="11" class="label">Rewind AI</text>
         </g>
 
-        <!-- Slice: DISTRIBUTE (angle ≈ 218.57°) -->
-        <line x1="400" y1="400" x2="75.4" y2="350.4" stroke="#27272a"/>
-        <text x="56.0" y="347.5" text-anchor="middle" class="label" font-size="12">Distribute</text>
-        <text x="56.0" y="361.5" text-anchor="middle" class="sublabel" font-size="11">Publish & grow</text>
+        <!-- Distribute -->
         <g style="color:var(--distribute)">
-          <circle class="node" cx="282.2" cy="300.6" r="12" fill="var(--distribute)"></circle>
-          <text x="282.2" y="280.6" text-anchor="middle" font-size="11" class="label">Substack</text>
-          <circle class="node" cx="224.9" cy="264.7" r="12" fill="var(--distribute)"></circle>
-          <text x="224.9" y="244.7" text-anchor="middle" font-size="11" class="label">Slack</text>
-          <circle class="node" cx="205.0" cy="288.0" r="12" fill="var(--distribute)"></circle>
-          <text x="205.0" y="268.0" text-anchor="middle" font-size="11" class="label">YouTube</text>
+          <circle class="node hero" cx="296.2" cy="310.6" r="13.5" fill="var(--distribute)"></circle>
+          <text x="296.2" y="290.6" text-anchor="middle" font-size="11" class="label">Substack</text>
+                    <circle class="node" cx="219.0" cy="298.0" r="12" fill="var(--distribute)"></circle>
+          <text x="219.0" y="278.0" text-anchor="middle" font-size="11" class="label">YouTube</text>
+          <circle class="node" cx="259.0" cy="323.0" r="12" fill="var(--distribute)"></circle>
+          <text x="259.0" y="343.0" text-anchor="middle" font-size="11" class="label">X / Twitter</text>
+          <circle class="node" cx="315.0" cy="345.0" r="12" fill="var(--distribute)"></circle>
+          <text x="315.0" y="365.0" text-anchor="middle" font-size="11" class="label">LinkedIn</text>
         </g>
       </svg>
 
-      <!-- Legend -->
       <div class="legend">
         <span><i class="chip" style="background:var(--plan)"></i> Plan</span>
         <span><i class="chip" style="background:var(--research)"></i> Research</span>
         <span><i class="chip" style="background:var(--build)"></i> Build</span>
         <span><i class="chip" style="background:var(--design)"></i> Design</span>
         <span><i class="chip" style="background:var(--automate)"></i> Automate</span>
-        <span><i class="chip" style="back
+        <span><i class="chip" style="background:var(--store)"></i> Store</span>
+        <span><i class="chip" style="background:var(--distribute)"></i> Distribute</span>
+        <div class="credit">
+          Curated by <a href="https://nothingbutstatic.substack.com/" target="_blank" rel="noopener">nothing but static</a>
+        </div>
+      </div>
+    </div>
+
+    
+
+    <p class="note">• Use this like a circuit: choose one tool per slice to keep your stack minimal. Swap as your needs evolve.</p>
+  </div>
+
+  </body>
+</html>
