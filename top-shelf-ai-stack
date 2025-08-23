@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Top Shelf AI Stack (2025) — nothing but static</title>
+  <style>
+    :root{
+      --bg:#0a0a0b; --panel:#111113; --ink:#fff; --muted:#a1a1aa; --grid:#27272a; --stroke:#3f3f46;
+      --plan:#60A5FA; --research:#A78BFA; --build:#34D399; --design:#F472B6; --automate:#FBBF24; --store:#4ADE80; --distribute:#F87171;
+    }
+    html,body{height:100%}
+    body{margin:0;background:#0a0a0b;color:var(--ink);font:14px/1.45 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto}
+    .wrap{max-width:1100px;margin:0 auto;padding:32px}
+    h1{margin:0 0 6px;font-size:28px;font-weight:800;letter-spacing:-0.02em;text-align:center}
+    .sub{color:var(--muted);text-align:center;margin:0 0 20px}
+    .panel{position:relative;border:1px solid #1f1f22;background:var(--panel);border-radius:22px;box-shadow:0 20px 60px rgba(0,0,0,.5);overflow:hidden}
+    .legend{position:absolute;left:0;right:0;bottom:0;padding:14px 16px;background:linear-gradient(to top, rgba(10,10,11,.92), rgba(10,10,11,0))}
+    .legend span{display:inline-flex;align-items:center;gap:6px;margin:4px 10px 0 0;color:#a3a3ad;font-size:12px}
+    .chip{width:12px;height:12px;border-radius:999px;box-shadow:0 0 14px currentColor}
+    .credit{margin:10px auto 0;text-align:center;color:#8b8b95;font-size:11px}
+    .credit a{color:#c7c7d1}
+    .note{max-width:760px;margin:16px auto 0;color:#9ca3af;font-size:13px}
+    /* Subtle fade/float for nodes */
+    .node{filter:drop-shadow(0 0 6px rgba(255,255,255,.15)) drop-shadow(0 0 12px currentColor); transform-origin:center; animation:pop .6s ease both}
+    @keyframes pop { from{opacity:0; transform:scale(.9)} to{opacity:1; transform:scale(1)} }
+    .label{font-weight:700;fill:#fff}
+    .sublabel{fill:#9ca3af}
+    /* Make SVG scale */
+    .frame{width:100%;height:auto;display:block}
+    /* Hover pulse */
+    .node:hover{animation:pulse .9s ease-in-out infinite alternate}
+    @keyframes pulse { to{transform:scale(1.08)} }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>⚡️ Top Shelf AI Stack (2025)</h1>
+    <p class="sub">Pick one champion per slice. Build a stack you actually love.</p>
+
+    <div class="panel">
+      <!-- SVG Constellation -->
+      <svg class="frame" viewBox="0 0 800 800" role="img" aria-labelledby="title desc">
+        <title id="title">Top Shelf AI Stack (2025) Radial Map</title>
+        <desc id="desc">A circular constellation map showing core LLMs at center and seven slices for plan, research, build, design, automate, store, distribute.</desc>
+
+        <!-- Background dotted grid -->
+        <defs>
+          <pattern id="dots" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+            <circle cx="1" cy="1" r="1" fill="#27272a"></circle>
+          </pattern>
+        </defs>
+        <rect x="0" y="0" width="800" height="800" fill="url(#dots)"></rect>
+
+        <!-- Concentric orbits -->
+        <g stroke="#27272a" fill="none">
+          <circle cx="400" cy="400" r="150"></circle>
+          <circle cx="400" cy="400" r="225"></circle>
+          <circle cx="400" cy="400" r="300"></circle>
+        </g>
+
+        <!-- Core -->
+        <g>
+          <circle cx="400" cy="400" r="70" fill="#0a0a0b" stroke="#3f3f46"></circle>
+          <text x="400" y="392" text-anchor="middle" class="label" font-size="14">Core LLM</text>
+          <text x="400" y="410" text-anchor="middle" class="sublabel" font-size="12">ChatGPT · Claude</text>
+        </g>
+
+        <!-- Helper to compute polar points manually (precomputed below) -->
+        <!-- We place 7 slices at equal angles starting at top (−90°):  -90, -38.57, 12.86, 64.29, 115.71, 167.14, 218.57  -->
+
+        <!-- Slice: PLAN -->
+        <!-- radial line -->
+        <line x1="400" y1="400" x2="400" y2="100" stroke="#27272a"/>
+        <!-- label -->
+        <text x="400" y="80" text-anchor="middle" class="label" font-size="12">Plan</text>
+        <text x="400" y="94" text-anchor="middle" class="sublabel" font-size="11">Where ideas become action</text>
+        <!-- nodes (inner/mid/outer with tiny jitter) -->
+        <g style="color:var(--plan)">
+          <!-- inner (150 at -90°) -->
+          <circle class="node" cx="400" cy="250" r="12" fill="var(--plan)"></circle>
+          <text x="400" y="230" text-anchor="middle" font-size="11" class="label">Linear</text>
+          <!-- mid (225 at -80°) -->
+          <circle class="node" cx="439.1" cy="187.6" r="12" fill="var(--plan)"></circle>
+          <text x="439.1" y="167.6" text-anchor="middle" font-size="11" class="label">Notion</text>
+        </g>
+
+        <!-- Slice: RESEARCH (angle ≈ -38.57°) -->
+        <line x1="400" y1="400" x2="724.6" y2="350.4" stroke="#27272a"/>
+        <text x="744.0" y="347.5" text-anchor="middle" class="label" font-size="12">Research</text>
+        <text x="744.0" y="361.5" text-anchor="middle" class="sublabel" font-size="11">Expand context. Find signal.</text>
+        <g style="color:var(--research)">
+          <!-- inner -->
+          <circle class="node" cx="517.8" cy="300.6" r="12" fill="var(--research)"></circle>
+          <text x="517.8" y="280.6" text-anchor="middle" font-size="11" class="label">Perplexity</text>
+          <!-- mid -->
+          <circle class="node" cx="575.1" cy="264.7" r="12" fill="var(--research)"></circle>
+          <text x="575.1" y="244.7" text-anchor="middle" font-size="11" class="label">Claude</text>
+        </g>
+
+        <!-- Slice: BUILD (angle ≈ 12.86°) -->
+        <line x1="400" y1="400" x2="675.1" y2="469.0" stroke="#27272a"/>
+        <text x="692.0" y="477.0" text-anchor="middle" class="label" font-size="12">Build</text>
+        <text x="692.0" y="491.0" text-anchor="middle" class="sublabel" font-size="11">Ship product faster</text>
+        <g style="color:var(--build)">
+          <circle class="node" cx="546.7" cy="433.4" r="12" fill="var(--build)"></circle>
+          <text x="546.7" y="413.4" text-anchor="middle" font-size="11" class="label">Devin</text>
+          <circle class="node" cx="606.2" cy="446.9" r="12" fill="var(--build)"></circle>
+          <text x="606.2" y="426.9" text-anchor="middle" font-size="11" class="label">Copilot</text>
+        </g>
+
+        <!-- Slice: DESIGN (angle ≈ 64.29°) -->
+        <line x1="400" y1="400" x2="524.8" y2="703.3" stroke="#27272a"/>
+        <text x="532.0" y="724.0" text-anchor="middle" class="label" font-size="12">Design</text>
+        <text x="532.0" y="738.0" text-anchor="middle" class="sublabel" font-size="11">Interfaces, visuals, motion</text>
+        <g style="color:var(--design)">
+          <circle class="node" cx="468.0" cy="553.8" r="12" fill="var(--design)"></circle>
+          <text x="468.0" y="533.8" text-anchor="middle" font-size="11" class="label">Figma</text>
+          <circle class="node" cx="493.7" cy="612.6" r="12" fill="var(--design)"></circle>
+          <text x="493.7" y="592.6" text-anchor="middle" font-size="11" class="label">Runway</text>
+        </g>
+
+        <!-- Slice: AUTOMATE (angle ≈ 115.71°) -->
+        <line x1="400" y1="400" x2="275.2" y2="703.3" stroke="#27272a"/>
+        <text x="268.0" y="724.0" text-anchor="middle" class="label" font-size="12">Automate</text>
+        <text x="268.0" y="738.0" text-anchor="middle" class="sublabel" font-size="11">Glue for your stack</text>
+        <g style="color:var(--automate)">
+          <circle class="node" cx="332.0" cy="553.8" r="12" fill="var(--automate)"></circle>
+          <text x="332.0" y="533.8" text-anchor="middle" font-size="11" class="label">Zapier AI</text>
+          <circle class="node" cx="306.3" cy="612.6" r="12" fill="var(--automate)"></circle>
+          <text x="306.3" y="592.6" text-anchor="middle" font-size="11" class="label">n8n / Make</text>
+        </g>
+
+        <!-- Slice: STORE (angle ≈ 167.14°) -->
+        <line x1="400" y1="400" x2="124.9" y2="469.0" stroke="#27272a"/>
+        <text x="108.0" y="477.0" text-anchor="middle" class="label" font-size="12">Store</text>
+        <text x="108.0" y="491.0" text-anchor="middle" class="sublabel" font-size="11">Databases + memory</text>
+        <g style="color:var(--store)">
+          <circle class="node" cx="253.3" cy="433.4" r="12" fill="var(--store)"></circle>
+          <text x="253.3" y="413.4" text-anchor="middle" font-size="11" class="label">Airtable</text>
+          <circle class="node" cx="193.8" cy="446.9" r="12" fill="var(--store)"></circle>
+          <text x="193.8" y="426.9" text-anchor="middle" font-size="11" class="label">Pinecone</text>
+          <!-- optional third -->
+          <circle class="node" cx="174.0" cy="470.0" r="12" fill="var(--store)"></circle>
+          <text x="174.0" y="450.0" text-anchor="middle" font-size="11" class="label">Mem.ai</text>
+        </g>
+
+        <!-- Slice: DISTRIBUTE (angle ≈ 218.57°) -->
+        <line x1="400" y1="400" x2="75.4" y2="350.4" stroke="#27272a"/>
+        <text x="56.0" y="347.5" text-anchor="middle" class="label" font-size="12">Distribute</text>
+        <text x="56.0" y="361.5" text-anchor="middle" class="sublabel" font-size="11">Publish & grow</text>
+        <g style="color:var(--distribute)">
+          <circle class="node" cx="282.2" cy="300.6" r="12" fill="var(--distribute)"></circle>
+          <text x="282.2" y="280.6" text-anchor="middle" font-size="11" class="label">Substack</text>
+          <circle class="node" cx="224.9" cy="264.7" r="12" fill="var(--distribute)"></circle>
+          <text x="224.9" y="244.7" text-anchor="middle" font-size="11" class="label">Slack</text>
+          <circle class="node" cx="205.0" cy="288.0" r="12" fill="var(--distribute)"></circle>
+          <text x="205.0" y="268.0" text-anchor="middle" font-size="11" class="label">YouTube</text>
+        </g>
+      </svg>
+
+      <!-- Legend -->
+      <div class="legend">
+        <span><i class="chip" style="background:var(--plan)"></i> Plan</span>
+        <span><i class="chip" style="background:var(--research)"></i> Research</span>
+        <span><i class="chip" style="background:var(--build)"></i> Build</span>
+        <span><i class="chip" style="background:var(--design)"></i> Design</span>
+        <span><i class="chip" style="background:var(--automate)"></i> Automate</span>
+        <span><i class="chip" style="back
