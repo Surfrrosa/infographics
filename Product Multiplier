@@ -110,4 +110,125 @@
     }
     .eyebrow{ font-family:"JetBrains Mono", ui-monospace, monospace; font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:var(--accent-2); opacity:.95 }
     .h3{ margin-top:6px; font-weight:800; font-size:18px; letter-spacing:.02em }
-    .list{ margin:10px 0 0; padding-left:16px; color:var(--muted); line-height:1.45;
+    .list{ margin:10px 0 0; padding-left:16px; color:var(--muted); line-height:1.45; font-size:14px }
+    .list li{ margin: 6px 0 }
+
+    /* Footer branding */
+    .footer{
+      position:absolute; inset:auto 24px 20px 24px; display:flex; justify-content:space-between; align-items:center; gap:12px; z-index:5;
+      color:var(--muted); font-size:12px
+    }
+    .brand a{ color:var(--ink); text-decoration:none; border-bottom:1px dotted rgba(255,255,255,.24) }
+
+    /* Print & export helpers */
+    @media print{
+      body{ background:#fff; -webkit-print-color-adjust: exact; print-color-adjust: exact }
+      .canvas{ width: 1200px; aspect-ratio:auto }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="canvas" role="img" aria-label="Infographic: The Product Multiplier Playbook — central hub with five branches for AI Fluency, Data Intuition, Systems Thinking, Cross-Domain Literacy, Storytelling & Experimentation.">
+      <!-- Header -->
+      <header class="header">
+        <div>
+          <div class="title">The Product Multiplier Playbook</div>
+          <div class="subtitle">From backlog babysitter to outcome amplifier</div>
+        </div>
+      </header>
+
+      <!-- Radial Stage -->
+      <div class="stage">
+        <!-- Center Hub -->
+        <div class="hub" aria-label="Amplify Outcomes center">
+          <span class="kicker">Center</span>
+          <div class="big">AMPLIFY OUTCOMES</div>
+          <div class="tag">Don’t just manage requirements. Multiply results.</div>
+        </div>
+
+        <!-- Orbit Ring -->
+        <div class="orbit"><div class="ring" aria-hidden="true"></div></div>
+
+        <!-- Rays (decorative lines from center) -->
+        <div class="rays" aria-hidden="true">
+          <span class="ray" style="--angle: 0deg"></span>
+          <span class="ray" style="--angle: 72deg"></span>
+          <span class="ray" style="--angle: 144deg"></span>
+          <span class="ray" style="--angle: 216deg"></span>
+          <span class="ray" style="--angle: 288deg"></span>
+        </div>
+
+        <!-- Spoke Cards -->
+        <div class="spoke" style="--angle: 0deg">
+          <article class="card" aria-labelledby="ai-fluency">
+            <div class="eyebrow">01</div>
+            <div class="h3" id="ai-fluency">AI Fluency</div>
+            <ul class="list">
+              <li>Prompts → Workflows → Harnesses</li>
+              <li>Tools as collaborators, not assistants</li>
+              <li>Automate research, specs, & reviews</li>
+            </ul>
+          </article>
+        </div>
+
+        <div class="spoke" style="--angle: 72deg">
+          <article class="card" aria-labelledby="data-intuition">
+            <div class="eyebrow">02</div>
+            <div class="h3" id="data-intuition">Data Intuition</div>
+            <ul class="list">
+              <li>Read signals fast</li>
+              <li>Test → Learn → Iterate</li>
+              <li>Hypotheses over hunches</li>
+            </ul>
+          </article>
+        </div>
+
+        <div class="spoke" style="--angle: 144deg">
+          <article class="card" aria-labelledby="systems-thinking">
+            <div class="eyebrow">03</div>
+            <div class="h3" id="systems-thinking">Systems Thinking</div>
+            <ul class="list">
+              <li>Product ↔ Tech ↔ Business</li>
+              <li>Map incentives & behaviors</li>
+              <li>Design for feedback loops</li>
+            </ul>
+          </article>
+        </div>
+
+        <div class="spoke" style="--angle: 216deg">
+          <article class="card" aria-labelledby="cross-domain">
+            <div class="eyebrow">04</div>
+            <div class="h3" id="cross-domain">Cross‑Domain Literacy</div>
+            <ul class="list">
+              <li>Import ideas from psych, econ, art</li>
+              <li>Innovate at the intersections</li>
+              <li>Steal like a system</li>
+            </ul>
+          </article>
+        </div>
+
+        <div class="spoke" style="--angle: 288deg">
+          <article class="card" aria-labelledby="story-experiment">
+            <div class="eyebrow">05</div>
+            <div class="h3" id="story-experiment">Storytelling & Experimentation</div>
+            <ul class="list">
+              <li>Make the complex feel inevitable</li>
+              <li>Prototype boldly, cheaply, often</li>
+              <li>Mistakes as multipliers</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+
+      <!-- Footer / Branding -->
+      <footer class="footer">
+        <div class="brand">Designed for <a href="https://nothingbutstatic.substack.com/" target="_blank" rel="noopener">nothing but static</a></div>
+        <div class="brand">© 2025</div>
+      </footer>
+    </section>
+  </div>
+
+  <!-- Tiny helper to export as PNG via browser screenshot tools; we’ll wire up a one‑click export in a later pass if needed. -->
+</body>
+</html>
