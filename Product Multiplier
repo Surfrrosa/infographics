@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,227 +9,215 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
   <style>
-    :root{
-      --bg: #0b0d10;          /* page background */
-      --panel: #0f1216;       /* canvas panel */
-      --ink: #e6ecf2;         /* primary text */
-      --muted: #98a2b3;       /* secondary text */
+    :root {
+      --bg: #0b0d10;
+      --panel: #0f1216;
+      --ink: #e6ecf2;
+      --muted: #A3AFBF;
       --line: rgba(255,255,255,.08);
-      --accent: #7c5cff;      /* neon violet */
-      --accent-2:#00ffc6;     /* mint */
-      --accent-3:#ff2d55;     /* punch */
-      --ring: rgba(124,92,255,.42);
+      --accent-2:#00ffc6;
+      --violet:#7c5cff;
+      --mint:#00ffc6;
       --shadow: 0 12px 50px rgba(0,0,0,.55);
-      --radius: 28px;
-      --orbit: 340px;         /* distance from center to cards */
-      --card-w: 290px;
+      --radius: 24px;
     }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0; color:var(--ink); background:
-        radial-gradient(900px 700px at 18% 8%, #111624, #0a0d13 55%, #07090d 100%),
-        var(--bg);
+    * { box-sizing:border-box; }
+    body {
+      margin:0; padding:0;
       font-family: Inter, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
-      letter-spacing:.01em;
+      background: #07090d;
+      color: var(--ink);
     }
-    .wrap{min-height:100svh; display:grid; place-items:center; padding:28px}
-
-    /* --- Canvas --- */
-    .canvas{
-      width: min(1200px, 96vw);
-      aspect-ratio: 16 / 9;
-      background:
-        linear-gradient(180deg, rgba(124,92,255,.06), rgba(0,255,198,.06) 60%, rgba(255,45,85,.06)),
-        var(--panel);
-      border:1px solid var(--line);
+    .wrap { min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px; }
+    .canvas {
+      width: min(1320px, 98vw);
+      background: var(--panel);
       border-radius: var(--radius);
-      position:relative; overflow:hidden; box-shadow: var(--shadow);
-      isolation:isolate; /* so filters don’t bleed */
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      padding: 40px 40px 32px;
+      display: grid;
+      grid-template-columns: repeat(14, 1fr);
+      grid-auto-rows: auto;
+      gap: 24px;
+      position: relative;
+      overflow: hidden;
+      isolation:isolate;
     }
-    /* subtle tech grid */
+
+    /* --- Color glow layer --- */
     .canvas::before{
-      content:""; position:absolute; inset:0; pointer-events:none; opacity:.2; mix-blend-mode:overlay;
+      content:""; position:absolute; inset:-20%; z-index:0; pointer-events:none;
       background:
-        repeating-linear-gradient(0deg, transparent 0 28px, rgba(255,255,255,.04) 28px 29px),
-        repeating-linear-gradient(90deg, transparent 0 28px, rgba(255,255,255,.04) 28px 29px);
-    }
-    /* vignette + neon fog */
-    .canvas::after{
-      content:""; position:absolute; inset:-20%; pointer-events:none; z-index:0;
-      background:
-        radial-gradient(560px 320px at 20% 85%, rgba(124,92,255,.18), transparent 60%),
-        radial-gradient(520px 380px at 85% 20%, rgba(0,255,198,.14), transparent 60%),
-        radial-gradient(800px 520px at 50% -10%, rgba(255,45,85,.12), transparent 70%),
+        radial-gradient(900px 600px at 20% 70%, rgba(124,92,255,.14), transparent 70%),
+        radial-gradient(800px 700px at 85% 25%, rgba(0,255,198,.10), transparent 72%),
+        radial-gradient(1200px 900px at 50% -10%, rgba(255,255,255,.05), transparent 70%),
         radial-gradient(100% 100% at 50% 50%, rgba(0,0,0,.35), transparent 60%);
-      filter: saturate(1.1);
+      filter: saturate(1.03);
     }
 
-    /* --- Header --- */
-    .header{
-      position:absolute; inset:24px 28px auto 28px; z-index:5;
-      display:flex; align-items:flex-start; justify-content:space-between; gap:16px;
+    /* Shared honeycomb SVG pattern (embedded) */
+    :root {
+      --honey-url: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="60" height="52" viewBox="0 0 60 52">  <defs>    <pattern id="hex" width="30" height="26" patternUnits="userSpaceOnUse">      <path d="M7.5 1.5 L22.5 1.5 L29 13 L22.5 24.5 L7.5 24.5 L1 13 Z"            fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>    </pattern>  </defs>  <rect width="100%" height="100%" fill="url(%23hex)" />  <g transform="translate(15,13)">    <rect width="100%" height="100%" fill="url(%23hex)" />  </g></svg>'); 
     }
-    .title{font-weight:800; font-size: clamp(22px, 2.4vw, 34px); letter-spacing:.02em}
-    .subtitle{color:var(--muted); font-weight:600; margin-top:6px; font-size: clamp(12px, 1.2vw, 14px)}
 
-    /* --- Core layout (radial) --- */
-    .stage{
-      position:absolute; inset:0; display:grid; place-items:center; z-index:1;
-      padding:80px; /* breathing room for labels */
+    /* Base faint honey layer (barely visible everywhere) */
+    .honey-base {
+      position:absolute; inset:-2% -2% -2% -2%; z-index:0; pointer-events:none;
+      background-image: var(--honey-url);
+      background-size: 120px 104px;
+      background-repeat: repeat;
+      opacity:.18;
+      -webkit-mask-image: radial-gradient(120% 100% at 50% 45%, rgba(0,0,0,.65), rgba(0,0,0,.35) 65%, transparent 95%);
+              mask-image: radial-gradient(120% 100% at 50% 45%, rgba(0,0,0,.65), rgba(0,0,0,.35) 65%, transparent 95%);
+      filter: blur(.2px);
     }
-    .hub{
-      position:relative; z-index:3; text-align:center; width:min(420px, 70%);
-      padding:28px 24px; border-radius: 1000px;
-      background: linear-gradient(180deg, rgba(124,92,255,.18), rgba(0,255,198,.16));
-      border:1px solid rgba(255,255,255,.12);
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,.06), 0 10px 30px rgba(0,0,0,.4);
+
+    /* Spotlight honey layer centered on hub, stronger near center and fading outwards */
+    .honey-spot {
+      position:absolute; inset:-2% -2% -2% -2%; z-index:0; pointer-events:none;
+      background-image: var(--honey-url);
+      background-size: 120px 104px;
+      background-repeat: repeat;
+      opacity:.55; /* stronger */
+      /* Center spotlight roughly where the hub sits (50% x, ~50% y) */
+      -webkit-mask-image: radial-gradient(35% 28% at 50% 50%, rgba(0,0,0,1) 0%, rgba(0,0,0,.9) 55%, rgba(0,0,0,.35) 70%, transparent 90%);
+              mask-image: radial-gradient(35% 28% at 50% 50%, rgba(0,0,0,1) 0%, rgba(0,0,0,.9) 55%, rgba(0,0,0,.35) 70%, transparent 90%);
+      filter: blur(.3px);
     }
-    .hub .kicker{font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--accent-2); font-size:12px; letter-spacing:.14em; text-transform:uppercase; display:block; margin-bottom:10px}
-    .hub .big{font-weight:800; font-size: clamp(28px, 3vw, 40px); letter-spacing:.02em}
-    .hub .tag{margin-top:8px; color:var(--muted); font-size: 14px}
 
-    /* Decorative orbit ring */
-    .orbit{ position:absolute; inset:0; z-index:2; display:grid; place-items:center; pointer-events:none }
-    .orbit .ring{ width: calc(var(--orbit) * 2 + 40px); height: calc(var(--orbit) * 2 + 40px); border-radius:50%;
-      border:1px dashed rgba(255,255,255,.10); box-shadow: 0 0 80px var(--ring) inset; }
+    header { grid-column: 1 / span 14; position: relative; z-index: 2; }
+    .title { font-weight:800; font-size: clamp(24px, 2.8vw, 36px); letter-spacing:.01em; }
+    .subtitle { font-weight:600; color: var(--muted); margin-top: 6px; }
 
-    /* Rays from center */
-    .rays{ position:absolute; inset:0; z-index:1; pointer-events:none }
-    .ray{ position:absolute; left:50%; top:50%; height:2px; width: calc(var(--orbit) + 40px); transform-origin:0 50%;
-      background: linear-gradient(90deg, rgba(124,92,255,.55), rgba(124,92,255,0)); opacity:.7; filter: drop-shadow(0 0 6px rgba(124,92,255,.35)); }
-    .ray[data-angle]{ transform: rotate(var(--angle)) translateZ(0); }
-
-    /* Spoke cards */
-    .spoke{ position:absolute; left:50%; top:50%; width:var(--card-w); transform:
-      rotate(var(--angle)) translate(var(--orbit)) rotate(calc(var(--angle) * -1)); z-index:3; }
-    .card{
-      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
-      border:1px solid rgba(255,255,255,.10);
-      border-radius: 18px; padding:16px 16px 14px; backdrop-filter: blur(6px);
-      box-shadow: 0 8px 24px rgba(0,0,0,.35), inset 0 0 0 1px rgba(255,255,255,.04);
+    .hub {
+      grid-column: 6 / span 4;
+      text-align: center;
+      padding: 34px 20px 24px;
+      border-radius: 1000px;
+      background: radial-gradient(60% 120% at 50% 10%, rgba(124,92,255,.26), rgba(0,255,198,.14));
+      border:1px solid rgba(255,255,255,.1);
+      box-shadow: 0 18px 44px rgba(0,0,0,.48), inset 0 0 0 1px rgba(255,255,255,.08);
+      z-index:2;
+      margin-top: 28px;
     }
-    .eyebrow{ font-family:"JetBrains Mono", ui-monospace, monospace; font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:var(--accent-2); opacity:.95 }
-    .h3{ margin-top:6px; font-weight:800; font-size:18px; letter-spacing:.02em }
-    .list{ margin:10px 0 0; padding-left:16px; color:var(--muted); line-height:1.45; font-size:14px }
-    .list li{ margin: 6px 0 }
+    .hub .big { font-weight:800; font-size: clamp(32px, 3.4vw, 46px); line-height:1.02; letter-spacing:.01em; }
+    .hub .tag { margin-top: 10px; font-size: 14px; color: var(--muted); }
 
-    /* Footer branding */
-    .footer{
-      position:absolute; inset:auto 24px 20px 24px; display:flex; justify-content:space-between; align-items:center; gap:12px; z-index:5;
-      color:var(--muted); font-size:12px
+    .card {
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border:1px solid rgba(255,255,255,.1);
+      border-radius: 16px;
+      padding: 18px 20px;
+      backdrop-filter: blur(6px);
+      box-shadow: 0 8px 24px rgba(0,0,0,.35), inset 0 0 0 1px rgba(255,255,255,.05);
+      position: relative; z-index:2;
     }
-    .brand a{ color:var(--ink); text-decoration:none; border-bottom:1px dotted rgba(255,255,255,.24) }
+    .eyebrow { font-family: "JetBrains Mono", monospace; font-size:11px; letter-spacing:.18em; text-transform:uppercase; color: var(--accent-2); }
+    .h3 { margin-top:6px; font-weight:800; font-size:19px; letter-spacing:.01em; }
+    .list { margin:10px 0 0; padding-left:16px; color: var(--muted); font-size:15px; line-height:1.55; }
+    .list li { margin:6px 0; }
 
-    /* Print & export helpers */
-    @media print{
-      body{ background:#fff; -webkit-print-color-adjust: exact; print-color-adjust: exact }
-      .canvas{ width: 1200px; aspect-ratio:auto }
+    .top-left { grid-column: 1 / span 4; }
+    .top-right { grid-column: 11 / span 4; }
+    .mid-left { grid-column: 1 / span 4; margin-top: -20px; transform: translateX(-12px); }
+    .mid-right { grid-column: 11 / span 4; margin-top: -20px; transform: translateX(12px); }
+    .bottom-center { grid-column: 6 / span 4; margin-top: -12px; }
+
+    footer {
+      grid-column: 1 / span 14;
+      display:flex; justify-content:space-between; margin-top:10px;
+      font-size: 12px; color: var(--muted); z-index:2; padding-top:8px;
     }
+    footer a { color: var(--ink); text-decoration:none; border-bottom:1px dotted rgba(255,255,255,.24); }
   </style>
 </head>
 <body>
   <div class="wrap">
-    <section class="canvas" role="img" aria-label="Infographic: The Product Multiplier Playbook — central hub with five branches for AI Fluency, Data Intuition, Systems Thinking, Cross-Domain Literacy, Storytelling & Experimentation.">
-      <!-- Header -->
-      <header class="header">
-        <div>
-          <div class="title">The Product Multiplier Playbook</div>
-          <div class="subtitle">From backlog babysitter to outcome amplifier</div>
-        </div>
+    <section class="canvas" role="img" aria-label="Infographic: The Product Multiplier Playbook — dark honeycomb background emphasized near the center hub.">
+      <!-- honeycomb background layers -->
+      <div class="honey-base" aria-hidden="true"></div>
+      <div class="honey-spot" aria-hidden="true"></div>
+
+      <header>
+        <div class="title">The Product Multiplier Playbook</div>
+        <div class="subtitle">From backlog babysitter to outcome amplifier</div>
       </header>
 
-      <!-- Radial Stage -->
-      <div class="stage">
-        <!-- Center Hub -->
-        <div class="hub" aria-label="Amplify Outcomes center">
-          <span class="kicker">Center</span>
-          <div class="big">AMPLIFY OUTCOMES</div>
-          <div class="tag">Don’t just manage requirements. Multiply results.</div>
-        </div>
-
-        <!-- Orbit Ring -->
-        <div class="orbit"><div class="ring" aria-hidden="true"></div></div>
-
-        <!-- Rays (decorative lines from center) -->
-        <div class="rays" aria-hidden="true">
-          <span class="ray" style="--angle: 0deg"></span>
-          <span class="ray" style="--angle: 72deg"></span>
-          <span class="ray" style="--angle: 144deg"></span>
-          <span class="ray" style="--angle: 216deg"></span>
-          <span class="ray" style="--angle: 288deg"></span>
-        </div>
-
-        <!-- Spoke Cards -->
-        <div class="spoke" style="--angle: 0deg">
-          <article class="card" aria-labelledby="ai-fluency">
-            <div class="eyebrow">01</div>
-            <div class="h3" id="ai-fluency">AI Fluency</div>
-            <ul class="list">
-              <li>Prompts → Workflows → Harnesses</li>
-              <li>Tools as collaborators, not assistants</li>
-              <li>Automate research, specs, & reviews</li>
-            </ul>
-          </article>
-        </div>
-
-        <div class="spoke" style="--angle: 72deg">
-          <article class="card" aria-labelledby="data-intuition">
-            <div class="eyebrow">02</div>
-            <div class="h3" id="data-intuition">Data Intuition</div>
-            <ul class="list">
-              <li>Read signals fast</li>
-              <li>Test → Learn → Iterate</li>
-              <li>Hypotheses over hunches</li>
-            </ul>
-          </article>
-        </div>
-
-        <div class="spoke" style="--angle: 144deg">
-          <article class="card" aria-labelledby="systems-thinking">
-            <div class="eyebrow">03</div>
-            <div class="h3" id="systems-thinking">Systems Thinking</div>
-            <ul class="list">
-              <li>Product ↔ Tech ↔ Business</li>
-              <li>Map incentives & behaviors</li>
-              <li>Design for feedback loops</li>
-            </ul>
-          </article>
-        </div>
-
-        <div class="spoke" style="--angle: 216deg">
-          <article class="card" aria-labelledby="cross-domain">
-            <div class="eyebrow">04</div>
-            <div class="h3" id="cross-domain">Cross‑Domain Literacy</div>
-            <ul class="list">
-              <li>Import ideas from psych, econ, art</li>
-              <li>Innovate at the intersections</li>
-              <li>Steal like a system</li>
-            </ul>
-          </article>
-        </div>
-
-        <div class="spoke" style="--angle: 288deg">
-          <article class="card" aria-labelledby="story-experiment">
-            <div class="eyebrow">05</div>
-            <div class="h3" id="story-experiment">Storytelling & Experimentation</div>
-            <ul class="list">
-              <li>Make the complex feel inevitable</li>
-              <li>Prototype boldly, cheaply, often</li>
-              <li>Mistakes as multipliers</li>
-            </ul>
-          </article>
-        </div>
+      <!-- top row cards -->
+      <div class="card top-left">
+        <div class="eyebrow">01</div>
+        <div class="h3">AI Fluency</div>
+        <ul class="list">
+          <li>Prompts → Workflows → Evaluations</li>
+          <li>Use AI as a collaborator, not an assistant</li>
+          <li>Automate research, specs, and reviews</li>
+          <li>Connect multiple tools into working systems</li>
+          <li>Evaluate quality, guardrails, cost, and latency</li>
+        </ul>
       </div>
 
-      <!-- Footer / Branding -->
-      <footer class="footer">
-        <div class="brand">Designed for <a href="https://nothingbutstatic.substack.com/" target="_blank" rel="noopener">nothing but static</a></div>
-        <div class="brand">© 2025</div>
+      <div class="card top-right">
+        <div class="eyebrow">02</div>
+        <div class="h3">Data Intuition</div>
+        <ul class="list">
+          <li>Spot signals quickly and test faster</li>
+          <li>Form hypotheses instead of relying on hunches</li>
+          <li>Use actionable metrics over vanity stats</li>
+          <li>Close the loop with instrumented events</li>
+          <li>Base decisions on evidence, not opinion</li>
+        </ul>
+      </div>
+
+      <!-- hub -->
+      <div class="hub">
+        <div class="big">AMPLIFY OUTCOMES</div>
+        <div class="tag">Don’t just manage requirements. Multiply results.</div>
+      </div>
+
+      <!-- mid row cards -->
+      <div class="card mid-left">
+        <div class="eyebrow">03</div>
+        <div class="h3">Systems Thinking</div>
+        <ul class="list">
+          <li>See product, tech, and business as one system</li>
+          <li>Map incentives and feedback loops</li>
+          <li>Set smart defaults that guide behavior</li>
+          <li>Design with trade-offs and safe exits in mind</li>
+          <li>Anticipate constraints and plan for resilience</li>
+        </ul>
+      </div>
+
+      <div class="card mid-right">
+        <div class="eyebrow">04</div>
+        <div class="h3">Cross‑Domain Literacy</div>
+        <ul class="list">
+          <li>Import ideas from psychology, economics, and design</li>
+          <li>Innovate at the intersections of disciplines</li>
+          <li>Systematically borrow and remix patterns</li>
+          <li>Turn cross-field insights into experiments</li>
+          <li>Triangulate truth across multiple sources</li>
+        </ul>
+      </div>
+
+      <!-- bottom center -->
+      <div class="card bottom-center">
+        <div class="eyebrow">05</div>
+        <div class="h3">Storytelling & Experimentation</div>
+        <ul class="list">
+          <li>Make the complex feel inevitable</li>
+          <li>Prototype boldly, cheaply, and often</li>
+          <li>Treat mistakes as multipliers</li>
+          <li>Communicate clearly and show working demos</li>
+          <li>Keep experimentation continuous and visible</li>
+        </ul>
+      </div>
+
+      <footer>
+        <div>Designed for <a href="https://nothingbutstatic.substack.com/" target="_blank" rel="noopener">nothing but static</a></div>
+        <div>© 2025</div>
       </footer>
     </section>
   </div>
-
-  <!-- Tiny helper to export as PNG via browser screenshot tools; we’ll wire up a one‑click export in a later pass if needed. -->
 </body>
 </html>
