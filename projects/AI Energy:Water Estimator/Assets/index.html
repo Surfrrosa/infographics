@@ -1,0 +1,235 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>AI Cost • Energy • Water Estimator — nothing but static</title>
+<style>
+:root {
+  --bg: #0E0F12;
+  --fg: #F4F5F7;
+  --accent: #D76AA3;
+  --ok: #34C6BD;
+  --muted: #8D93A6;
+}
+* { box-sizing: border-box; }
+html, body { margin:0; padding:0; background: var(--bg); color: var(--fg); font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji"; }
+a{color:var(--accent); text-decoration:none}
+.container { width:1080px; min-height:1350px; margin:0 auto; padding:24px; background: linear-gradient(180deg, #0E0F12 0%, #111319 100%); position:relative; overflow:visible; }
+.safe { border-radius:24px; padding:24px; background: linear-gradient(180deg, rgba(215,106,163,0.06) 0%, rgba(52,198,189,0.05) 100%); backdrop-filter: blur(2px); }
+.grid { display:grid; grid-template-columns: repeat(12, 1fr); grid-auto-rows: minmax(40px, auto); gap:20px; }
+.h1 { font-size:56px; line-height:1.05; letter-spacing:-0.02em; font-weight:800; }
+.h2 { font-size:28px; font-weight:700; letter-spacing:-0.01em; }
+.p  { font-size:18px; color:var(--fg); opacity:0.9 }
+.micro { font-size:14px; color:var(--muted); }
+.card { background: rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); border-radius:20px; padding:16px 18px; box-shadow: 0 2px 6px rgba(0,0,0,0.2); }
+.badge { display:inline-flex; align-items:center; gap:8px; padding:6px 10px; border-radius:999px; font-weight:600; border:1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.04); }
+.spark { height:32px; width:100%; }
+.ring { width:128px; height:128px; border-radius:50%; background:
+  conic-gradient(var(--ok) calc(var(--pct) * 1%), rgba(255,255,255,0.08) 0);
+  display:grid; place-items:center; margin-right:16px;
+}
+.ring .num { font-size:28px; font-weight:800; }
+.hstack { display:flex; align-items:center; gap:14px; }
+.vstack { display:flex; flex-direction:column; gap:10px; }
+.kv { display:flex; justify-content:space-between; gap:12px; font-feature-settings: 'tnum' 1, 'cv01' 1; }
+.kv b { color:var(--fg); }
+.row { display:flex; gap:10px; }
+.bar { height:14px; background: rgba(255,255,255,0.08); border-radius:10px; overflow:hidden; }
+.bar > i { display:block; height:100%; background: var(--accent); }
+.footer { margin-top:18px; display:flex; justify-content:space-between; align-items:center; }
+.logo { font-weight:800; letter-spacing:0.02em; }
+.qr { width:54px; height:54px; border:1px dashed rgba(255,255,255,0.2); border-radius:8px; display:grid; place-items:center; color:var(--muted); }
+.hr { height:1px; background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,0.18), rgba(255,255,255,0)); }
+.note { color: var(--muted); font-size:14px; }
+button, input[type="file"]::file-selector-button {
+  background: var(--accent); color:#0D0F12; border:none; border-radius:12px; padding:10px 14px; font-weight:700; cursor:pointer;
+}
+.btn-ghost { background: transparent; color: var(--fg); border:1px solid rgba(255,255,255,0.14); }
+small.code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; font-size:12px; color: var(--muted); }
+</style>
+</head>
+<body>
+  <div class="container">
+    <div class="safe vstack" style="gap:18px;">
+      <div class="hstack" style="justify-content:space-between;">
+        <div class="logo">nothing but static</div>
+        <div class="hstack" style="gap:8px;">
+          <a class="badge" href="https://nothingbutstatic.substack.com/" target="_blank">Substack</a>
+          <span class="badge btn-ghost"><input id="csvInput" type="file" accept=".csv" style="background:transparent; border:none; color:var(--fg)"/></span>
+        </div>
+      </div>
+
+      <div>
+        <div class="h1">AI Cost • Energy • Water</div>
+        <div class="p">A pocket calculator for $/task, CO₂, and water—grounded in transparent assumptions.</div>
+      </div>
+
+      <div class="grid">
+        <!-- Inputs -->
+        <div style="grid-column: span 6" class="card vstack">
+          <div class="h2">Task profile</div>
+          <label class="kv"><span>Input tokens</span><input id="inTok" type="number" value="1000" min="0" style="width:140px; padding:6px 10px; border-radius:10px; border:1px solid rgba(255,255,255,0.15); background:transparent; color:var(--fg)"/></label>
+          <label class="kv"><span>Output tokens</span><input id="outTok" type="number" value="500" min="0" style="width:140px; padding:6px 10px; border-radius:10px; border:1px solid rgba(255,255,255,0.15); background:transparent; color:var(--fg)"/></label>
+          <label class="kv"><span>Latency target (s)</span><input id="lat" type="number" value="1.0" step="0.1" min="0" style="width:140px; padding:6px 10px; border-radius:10px; border:1px solid rgba(255,255,255,0.15); background:transparent; color:var(--fg)"/></label>
+          <div class="note">Tip: Upload the evidence CSV to auto-fill model pricing below.</div>
+        </div>
+
+        <!-- Model pricing -->
+        <div style="grid-column: span 6" class="card vstack" id="models">
+          <div class="h2">Model pricing (per 1M tokens)</div>
+          <div class="kv"><span>OpenAI GPT‑5</span><b data-model="gpt5">$1.25 in / $10 out</b></div>
+          <div class="kv"><span>Anthropic Claude Sonnet 4</span><b data-model="sonnet4">$3 in / $15 out</b></div>
+          <div class="kv"><span>Google Gemini 1.5 Pro</span><b data-model="gemini15">$1.25 in / $5 out</b></div>
+          <small class="code">Override by editing values or uploading CSV.</small>
+        </div>
+
+        <!-- Assumptions -->
+        <div style="grid-column: span 12" class="card vstack">
+          <div class="h2">Energy • Water • Carbon assumptions</div>
+          <div class="kv"><span>Energy per prompt</span><b><input id="wh" type="number" value="0.24" step="0.01" style="width:120px; padding:6px 10px; border-radius:10px; border:1px solid rgba(255,255,255,0.15); background:transparent; color:var(--fg)"/> Wh</b></div>
+          <div class="kv"><span>Water use effectiveness (WUE)</span><b><input id="wueLo" type="number" value="0.18" step="0.01" style="width:100px; padding:6px 10px; border-radius:10px; border:1px solid rgba(255,255,255,0.15); background:transparent; color:var(--fg)"/>–<input id="wueHi" type="number" value="1.8" step="0.1" style="width:100px; padding:6px 10px; border-radius:10px; border:1px solid rgba(255,255,255,0.15); background:transparent; color:var(--fg)"/> L/kWh</b></div>
+          <div class="kv"><span>Grid CO₂ intensity</span><b><input id="co2" type="number" value="367" step="1" style="width:120px; padding:6px 10px; border-radius:10px; border:1px solid rgba(255,255,255,0.15); background:transparent; color:var(--fg)"/> g/kWh</b></div>
+          <small class="code">Lower WUE ≈ hyperscaler claims; Higher ≈ industry reference. CO₂ from EIA U.S. grid average.</small>
+        </div>
+
+        <!-- Outputs -->
+        <div style="grid-column: span 12" class="card vstack" id="results">
+          <div class="h2">Estimates</div>
+          <div class="grid">
+            <div style="grid-column: span 4" class="vstack">
+              <div class="kv"><span>Cost/task (GPT‑5)</span><b id="c_gpt5">$—</b></div>
+              <div class="kv"><span>Cost/task (Sonnet 4)</span><b id="c_sonnet4">$—</b></div>
+              <div class="kv"><span>Cost/task (Gemini 1.5)</span><b id="c_gemini15">$—</b></div>
+            </div>
+            <div style="grid-column: span 4" class="vstack">
+              <div class="kv"><span>Energy per task</span><b id="energy">— Wh</b></div>
+              <div class="kv"><span>Water per task</span><b id="water">— mL</b></div>
+              <div class="kv"><span>CO₂ per task</span><b id="co2out">— g</b></div>
+            </div>
+            <div style="grid-column: span 4" class="vstack">
+              <div class="kv"><span>Meets latency target?</span><b id="latencyOK">—</b></div>
+              <div class="kv"><span>On‑device speed ref</span><b id="devSpeed">≈ 30 tok/s</b></div>
+              <div class="kv"><span>SWE‑bench ref</span><b id="sweRef">≈ 65–68%</b></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer">
+        <div class="micro">Transparent math • Edit assumptions • Export as image</div>
+        <div class="hstack" style="gap:10px;">
+          <a class="badge" href="https://nothingbutstatic.substack.com/" target="_blank">Curated by Nothing but Static</a>
+          <div class="qr">QR</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+function parseCSV(text) {
+  const lines = text.split(/\r?\n/).filter(Boolean);
+  const header = lines.shift().split(",").map(s=>s.trim());
+  return lines.map(line => {
+    const cols = [];
+    let cur = "", insideQuotes = false;
+    for (let i=0;i<line.length;i++) {
+      const c = line[i];
+      if (c === '"') { insideQuotes = !insideQuotes; continue; }
+      if (c === "," && !insideQuotes) { cols.push(cur); cur = ""; }
+      else { cur += c; }
+    }
+    cols.push(cur);
+    const obj = {}
+    header.forEach((h, idx) => obj[h] = (cols[idx]||"").trim());
+    return obj;
+  });
+}
+
+const price = {
+  gpt5: { in:1.25, out:10 },
+  sonnet4: { in:3, out:15 },
+  gemini15: { in:1.25, out:5 }
+};
+
+function updateCosts() {
+  const inTok = parseFloat(document.getElementById('inTok').value||0);
+  const outTok = parseFloat(document.getElementById('outTok').value||0);
+  const models = ['gpt5','sonnet4','gemini15'];
+  models.forEach(m => {
+    const p = price[m];
+    const cost = (inTok/1e6)*p.in + (outTok/1e6)*p.out;
+    document.getElementById('c_'+m).textContent = '$' + cost.toFixed(5);
+  });
+}
+
+function updateImpacts() {
+  const Wh = parseFloat(document.getElementById('wh').value||0);
+  const kWh = Wh / 1000.0;
+  const wLo = parseFloat(document.getElementById('wueLo').value||0);
+  const wHi = parseFloat(document.getElementById('wueHi').value||0);
+  const co2 = parseFloat(document.getElementById('co2').value||0);
+  document.getElementById('energy').textContent = Wh.toFixed(2) + ' Wh';
+  document.getElementById('water').textContent = (kWh*wLo*1000).toFixed(3) + '–' + (kWh*wHi*1000).toFixed(3) + ' mL';
+  document.getElementById('co2out').textContent = (kWh*co2).toFixed(3) + ' g';
+}
+
+function initCalc() {
+  ['inTok','outTok','wh','wueLo','wueHi','co2'].forEach(id => document.getElementById(id).addEventListener('input', () => { updateCosts(); updateImpacts(); }));
+  updateCosts(); updateImpacts();
+}
+
+document.getElementById('csvInput').addEventListener('change', async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const text = await file.text();
+  const rows = parseCSV(text);
+
+  // Try to auto-fill pricing, energy, references based on Category/Metric
+  rows.forEach(r => {
+    const cat = (r.Category||'').toLowerCase();
+    const metric = (r.Metric||'').toLowerCase();
+    const val = r.Value||'';
+
+    if (cat.includes('model pricing')) {
+      if (metric.includes('gpt-5')) {
+        const m = val.match(/\$?([0-9\.]+)\s*input\s*\/\s*\$?([0-9\.]+)\s*output/i);
+        if (m) { price.gpt5.in = parseFloat(m[1]); price.gpt5.out = parseFloat(m[2]); }
+      }
+      if (metric.includes('sonnet 4')) {
+        const m = val.match(/\$?([0-9\.]+)\s*in\w*\s*\/\s*\$?([0-9\.]+)\s*out/i);
+        if (m) { price.sonnet4.in = parseFloat(m[1]); price.sonnet4.out = parseFloat(m[2]); }
+      }
+      if (metric.includes('gemini 1.5')) {
+        const m = val.match(/\$?([0-9\.]+)\s*in\w*\s*\/\s*\$?([0-9\.]+)\s*out/i);
+        if (m) { price.gemini15.in = parseFloat(m[1]); price.gemini15.out = parseFloat(m[2]); }
+      }
+    }
+
+    if (cat.includes('per-prompt impact')) {
+      if (metric && metric.toLowerCase().includes('energy per')) {
+        const m = val.match(/([0-9\.]+)\s*Wh/i); if (m) document.getElementById('wh').value = parseFloat(m[1]);
+      }
+      if (metric && (metric.toLowerCase().includes('co₂ per kwh') || metric.toLowerCase().includes('co2 per kwh'))) {
+        const m = val.match(/([0-9\.]+)\s*g\s*\/\s*kWh/i); if (m) document.getElementById('co2').value = parseFloat(m[1]);
+      }
+    }
+  });
+
+  // Update UI text for pricing section
+  document.querySelector('[data-model="gpt5"]').textContent = `$${price.gpt5.in} in / $${price.gpt5.out} out`;
+  document.querySelector('[data-model="sonnet4"]').textContent = `$${price.sonnet4.in} in / $${price.sonnet4.out} out`;
+  document.querySelector('[data-model="gemini15"]').textContent = `$${price.gemini15.in} in / $${price.gemini15.out} out`;
+
+  updateCosts(); updateImpacts();
+
+  // Optional refs if present
+  const sweRef = rows.find(r => (r.Category||'').toLowerCase().includes('benchmarks'));
+  if (sweRef) document.getElementById('sweRef').textContent = sweRef.Value || document.getElementById('sweRef').textContent;
+});
+
+initCalc();
+</script>
+</body>
+</html>

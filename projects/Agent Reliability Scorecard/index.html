@@ -1,0 +1,228 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Agent Reliability Scorecard — nothing but static</title>
+<style>
+:root {
+  --bg: #0E0F12;
+  --fg: #F4F5F7;
+  --accent: #D76AA3;
+  --ok: #34C6BD;
+  --muted: #8D93A6;
+}
+* { box-sizing: border-box; }
+html, body { margin:0; padding:0; background: var(--bg); color: var(--fg); font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji"; }
+a{color:var(--accent); text-decoration:none}
+.container { width:1080px; min-height:1350px; margin:0 auto; padding:24px; background: linear-gradient(180deg, #0E0F12 0%, #111319 100%); position:relative; overflow:visible; }
+.safe { border-radius:24px; padding:24px; background: linear-gradient(180deg, rgba(215,106,163,0.06) 0%, rgba(52,198,189,0.05) 100%); backdrop-filter: blur(2px); }
+.grid { display:grid; grid-template-columns: repeat(12, 1fr); grid-auto-rows: minmax(40px, auto); gap:20px; }
+.h1 { font-size:56px; line-height:1.05; letter-spacing:-0.02em; font-weight:800; }
+.h2 { font-size:28px; font-weight:700; letter-spacing:-0.01em; }
+.p  { font-size:18px; color:var(--fg); opacity:0.9 }
+.micro { font-size:14px; color:var(--muted); }
+.card { background: rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); border-radius:20px; padding:16px 18px; box-shadow: 0 2px 6px rgba(0,0,0,0.2); }
+.badge { display:inline-flex; align-items:center; gap:8px; padding:6px 10px; border-radius:999px; font-weight:600; border:1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.04); }
+.spark { height:32px; width:100%; }
+.ring { width:128px; height:128px; border-radius:50%; background:
+  conic-gradient(var(--ok) calc(var(--pct) * 1%), rgba(255,255,255,0.08) 0);
+  display:grid; place-items:center; margin-right:16px;
+}
+.ring .num { font-size:28px; font-weight:800; }
+.hstack { display:flex; align-items:center; gap:14px; }
+.vstack { display:flex; flex-direction:column; gap:10px; }
+.kv { display:flex; justify-content:space-between; gap:12px; font-feature-settings: 'tnum' 1, 'cv01' 1; }
+.kv b { color:var(--fg); }
+.row { display:flex; gap:10px; }
+.bar { height:14px; background: rgba(255,255,255,0.08); border-radius:10px; overflow:hidden; }
+.bar > i { display:block; height:100%; background: var(--accent); }
+.footer { margin-top:18px; display:flex; justify-content:space-between; align-items:center; }
+.logo { font-weight:800; letter-spacing:0.02em; }
+.qr { width:54px; height:54px; border:1px dashed rgba(255,255,255,0.2); border-radius:8px; display:grid; place-items:center; color:var(--muted); }
+.hr { height:1px; background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,0.18), rgba(255,255,255,0)); }
+.note { color: var(--muted); font-size:14px; }
+button, input[type="file"]::file-selector-button {
+  background: var(--accent); color:#0D0F12; border:none; border-radius:12px; padding:10px 14px; font-weight:700; cursor:pointer;
+}
+.btn-ghost { background: transparent; color: var(--fg); border:1px solid rgba(255,255,255,0.14); }
+small.code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; font-size:12px; color: var(--muted); }
+</style>
+</head>
+<body>
+  <div class="container">
+    <div class="safe">
+      <div class="grid">
+        <!-- Header -->
+        <div style="grid-column: span 12" class="vstack">
+          <div class="hstack" style="justify-content:space-between;">
+            <div class="logo">nothing but static</div>
+            <div class="hstack" style="gap:8px;">
+              <a class="badge" href="https://nothingbutstatic.substack.com/" target="_blank">Substack</a>
+              <span class="badge btn-ghost"><input id="csvInput" type="file" accept=".csv" style="background:transparent; border:none; color:var(--fg)"/></span>
+            </div>
+          </div>
+          <div class="h1">Agent Reliability Scorecard</div>
+          <div class="p">From cool demo to dependable coworker—measure what matters.</div>
+        </div>
+
+        <!-- SLA at a glance -->
+        <div style="grid-column: span 6" class="card">
+          <div class="h2">SLA at a glance</div>
+          <div class="hstack" style="margin-top:8px;">
+            <div class="ring" style="--pct:92;"><div class="num" id="tasksPct">92%</div></div>
+            <div class="vstack" style="gap:8px;">
+              <div class="kv"><span>MTTH (Mean Time to Human)</span><b id="mtth">75s</b></div>
+              <div class="kv"><span>Rollback rate</span><b id="rollback">2.6%</b></div>
+              <div class="kv"><span>Tasks completed</span><b id="tasksCompleted">≥ 92%</b></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cost & latency -->
+        <div style="grid-column: span 6" class="card vstack">
+          <div class="h2">Cost &amp; latency</div>
+          <div class="kv"><span>Cost per task (avg)</span><b id="costAvg">$0.006</b></div>
+          <div class="kv"><span>Cost per task (p95)</span><b id="costP95">$0.015</b></div>
+          <div class="kv"><span>p95 latency (UI actions)</span><b id="latencyP95">0.9s</b></div>
+          <div class="kv"><span>Retries per success</span><b id="retries">1.3×</b></div>
+        </div>
+
+        <!-- Guardrail health -->
+        <div style="grid-column: span 5" class="card vstack">
+          <div class="h2">Guardrail health</div>
+          <div class="kv"><span>Jailbreak attempts blocked</span><b id="jailbreaks">98%</b></div>
+          <div class="kv"><span>Unsafe-output blocks</span><b id="unsafeBlocks">41</b></div>
+          <div class="kv"><span>Tool denials</span><b id="toolDenials">0.8%</b></div>
+          <div class="note">Track post-patch drift. Benchmarks ≠ prod reliability.</div>
+        </div>
+
+        <!-- Failure taxonomy -->
+        <div style="grid-column: span 7" class="card vstack">
+          <div class="h2">Failure taxonomy</div>
+          <div class="kv"><span>Retrieval miss → hallucinated answer</span><span class="bar" style="width:55%"><i style="width:100%"></i></span></div>
+          <div class="kv"><span>Tool error (timeout/403/5xx)</span><span class="bar" style="width:48%"><i style="width:100%"></i></span></div>
+          <div class="kv"><span>Reasoning dead‑end (loops/no plan)</span><span class="bar" style="width:37%"><i style="width:100%"></i></span></div>
+          <div class="kv"><span>External API failure</span><span class="bar" style="width:22%"><i style="width:100%"></i></span></div>
+          <small class="code">Stack‑rank last 7 days by frequency; fix top 1–2 each week.</small>
+        </div>
+
+        <!-- Ops loop (Agent SRE) -->
+        <div style="grid-column: span 12" class="card vstack">
+          <div class="h2">Ops loop (Agent SRE)</div>
+          <div class="row" style="gap:12px; flex-wrap:wrap;">
+            <span class="badge">Detect</span>
+            <span class="badge">Triage</span>
+            <span class="badge">Fix</span>
+            <span class="badge">Verify</span>
+            <span class="badge">Learn</span>
+            <span class="badge">Owner: <b id="owner">Agent Platform</b></span>
+          </div>
+          <div class="hr" style="margin:10px 0;"></div>
+          <div class="row" style="gap:16px; flex-wrap:wrap;">
+            <span class="badge btn-ghost">D/RACI</span>
+            <span class="badge btn-ghost">Repro steps</span>
+            <span class="badge btn-ghost">Test case added</span>
+            <span class="badge btn-ghost">Rollback notes</span>
+          </div>
+        </div>
+
+        <!-- Human-in-the-loop gates -->
+        <div style="grid-column: span 12" class="card vstack">
+          <div class="h2">Human‑in‑the‑loop gates</div>
+          <div class="row" style="gap:12px; flex-wrap:wrap;">
+            <span class="badge">Auto‑act</span>
+            <span class="badge">Ask‑to‑act</span>
+            <span class="badge">Read‑only suggest</span>
+            <span class="badge">“Money moves” confirmation ≥ <b id="confirmThresh">95%</b></span>
+          </div>
+        </div>
+
+        <!-- Evidence pack (CSV-driven) -->
+        <div style="grid-column: span 12" class="card vstack">
+          <div class="h2">Evidence pack</div>
+          <div id="evidence" class="vstack"></div>
+          <small class="code">Tip: upload the CSV evidence pack to auto‑populate these receipts.</small>
+        </div>
+      </div>
+
+      <!-- Footer strip -->
+      <div class="footer">
+        <div class="micro">Version v1.0 • Env: prod • Cache hit‑rate 62% • Weekly trend <svg class="spark" viewBox="0 0 120 32" preserveAspectRatio="none"><polyline fill="none" stroke="currentColor" stroke-width="2" points="0,22 12,18 24,20 36,12 48,16 60,10 72,14 84,9 96,12 108,8 120,11"/></svg></div>
+        <div class="hstack" style="gap:10px;">
+          <a class="badge" href="https://nothingbutstatic.substack.com/" target="_blank">Curated by Nothing but Static</a>
+          <div class="qr">QR</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+<script>
+// Minimal CSV parser for "Category,Metric,Value,Assumptions/Notes,Source"
+function parseCSV(text) {
+  const lines = text.split(/\r?\n/).filter(Boolean);
+  const header = lines.shift().split(",").map(s=>s.trim());
+  return lines.map(line => {
+    const cols = [];
+    let cur = "", insideQuotes = false;
+    for (let i=0;i<line.length;i++) {
+      const c = line[i];
+      if (c === '"') { insideQuotes = !insideQuotes; continue; }
+      if (c === "," && !insideQuotes) { cols.push(cur); cur = ""; }
+      else { cur += c; }
+    }
+    cols.push(cur);
+    const obj = {}
+    header.forEach((h, idx) => obj[h] = (cols[idx]||"").trim());
+    return obj;
+  });
+}
+
+document.getElementById('csvInput').addEventListener('change', async (e) => {
+  const badge = e.target.closest('.badge'); if (badge) { badge.style.borderColor = 'rgba(52,198,189,0.9)'; }
+  const toast = document.createElement('div');
+  toast.textContent = 'CSV loaded ✓';
+  toast.style.position='fixed'; toast.style.right='20px'; toast.style.top='20px'; toast.style.padding='8px 12px';
+  toast.style.background='rgba(52,198,189,0.15)'; toast.style.border='1px solid rgba(52,198,189,0.6)'; toast.style.borderRadius='10px';
+  toast.style.zIndex='9999'; document.body.appendChild(toast); setTimeout(()=>toast.remove(),1500);
+  const file = e.target.files[0];
+  if (!file) return;
+  const text = await file.text();
+  const rows = parseCSV(text);
+  const mount = document.getElementById('evidence');
+  mount.innerHTML = "";
+  const groups = rows.reduce((acc, r) => { (acc[r.Category] = acc[r.Category] || []).push(r); return acc; }, {});
+  for (const [cat, items] of Object.entries(groups)) {
+    const wrap = document.createElement('div');
+    wrap.className = 'vstack';
+    const h = document.createElement('div');
+    h.className = 'h2';
+    h.textContent = cat;
+    wrap.appendChild(h);
+    items.forEach(r => {
+      const row = document.createElement('div');
+      row.className = 'kv';
+      const left = document.createElement('span');
+      left.textContent = r.Metric;
+      const right = document.createElement('b');
+      right.textContent = r.Value;
+      row.appendChild(left);
+      row.appendChild(right);
+      wrap.appendChild(row);
+      if (r["Assumptions/Notes"] || r.Source) {
+        const note = document.createElement('div');
+        note.className = 'note';
+        note.textContent = (r["Assumptions/Notes"]? r["Assumptions/Notes"] + " " : "") + (r.Source? "Source: " + r.Source : "");
+        wrap.appendChild(note);
+      }
+    });
+    mount.appendChild(wrap);
+    const hr = document.createElement('div'); hr.className = 'hr'; hr.style.margin = '8px 0 12px'; mount.appendChild(hr);
+  mount.scrollIntoView({behavior:'smooth', block:'start'});
+  }
+});
+</script>
+</body>
+</html>
